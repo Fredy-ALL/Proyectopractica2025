@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoApi.Data;     
-using ToDoApi.Models;   
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
+using ToDoApi.Data;
+using ToDoApi.Models;
 
 namespace ToDoApi.Controllers
 {
@@ -13,114 +10,93 @@ namespace ToDoApi.Controllers
     public class ActividadesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private Actividades actividades;
 
         public ActividadesController(AppDbContext context)
         {
             _context = context;
         }
 
-
+        // GET: api/Actividades
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Actividad>>> GetActividades()
+        public async Task<ActionResult<IEnumerable<Actividades>>> GetActividades()
         {
-            return await _context.Actividades.Include(a => a.Usuario).ToListAsync();
+            return await _context.Actividades.ToListAsync();
         }
 
-        // GET: api/actividades/5
+        // GET: api/Actividades/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Actividad>> GetActividad(int id)
+        public async Task<ActionResult<Actividades>> GetActividad(int id)
         {
-            var actividad = await _context.Actividades
-                .Include(a => a.Usuario)
-                .FirstOrDefaultAsync(a => a.Id == id);
+            var actividad = await _context.Actividades.FindAsync(id);
 
             if (actividad == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Actividad no encontrada.");
 
             return actividad;
         }
 
-        // POST: api/actividades
+        // POST: api/Actividades
         [HttpPost]
-        public async Task<ActionResult<Actividad>> PostActividad(Actividad actividad)
+        public async Task<ActionResult<Actividades>> PostActividad([FromBody] Actividades actividad)
         {
-            // Verificar que el usuario exista
-            var usuarioExistente = await _context.Usuarios.FindAsync(actividad.UsuarioId);
-            if (usuarioExistente == null)
-            {
-                return BadRequest("El usuario no existe.");
-            }
-
-            // Attach del usuario existente para que EF Core no intente insertarlo
-            actividad.Usuario = usuarioExistente;
-            _context.Actividades.Add(actividad);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             try
             {
+                _context.Actividades.Add(actividades);
                 await _context.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
             }
-            catch (DbUpdateException)
+            catch (Exception ex)
             {
-                return BadRequest("Ocurrió un error al guardar la actividad.");
+                return BadRequest($"Ocurrió un error al guardar la actividad: {ex.Message}");
             }
-
-            return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
         }
 
-        // PUT: api/actividades/5
+        // PUT: api/Actividades/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutActividad(int id, Actividad actividad)
+        public async Task<IActionResult> PutActividad(int id, [FromBody] Actividades actividad)
         {
             if (id != actividad.Id)
-            {
-                return BadRequest();
-            }
+                return BadRequest("El ID no coincide.");
 
-            // Verificar que el usuario exista
-            var usuarioExistente = await _context.Usuarios.FindAsync(actividad.UsuarioId);
-            if (usuarioExistente == null)
-            {
-                return BadRequest("El usuario no existe.");
-            }
-
-            actividad.Usuario = usuarioExistente;
             _context.Entry(actividad).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Actividades.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
+                if (!ActividadExists(id))
+                    return NotFound("Actividad no encontrada.");
                 else
-                {
                     throw;
-                }
             }
-
-            return NoContent();
         }
 
-        // DELETE: api/actividades/5
+        // DELETE: api/Actividades/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteActividad(int id)
         {
             var actividad = await _context.Actividades.FindAsync(id);
             if (actividad == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Actividad no encontrada.");
 
             _context.Actividades.Remove(actividad);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
+        private bool ActividadExists(int id)
+        {
+            return _context.Actividades.Any(a => a.Id == id);
+        }
     }
 }
+
+

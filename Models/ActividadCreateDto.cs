@@ -1,14 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace ToDoApi.Models
 {
-    public class Actividades
+    public class ActividadDto
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required, MaxLength(255)]
         public string Titulo { get; set; }
 
@@ -16,7 +12,7 @@ namespace ToDoApi.Models
         public string Descripcion { get; set; }
 
         [Required]
-        [RegularExpression("alta|media|baja", ErrorMessage = "Prioridad inválida.")]
+        [RegularExpression("alta|media|baja")]
         public string Prioridad { get; set; }
 
         [Required]
@@ -26,12 +22,10 @@ namespace ToDoApi.Models
         public DateTime FechaEstimadaFinalizacion { get; set; }
 
         [Required]
-        [RegularExpression("pendiente|en progreso|completada|cancelada", ErrorMessage = "Estado inválido.")]
+        [RegularExpression("pendiente|en progreso|completada|cancelada")]
         public string Estado { get; set; }
 
-        // Ya no hay UsuarioId ni relación directa
-        [JsonIgnore]
-        public virtual ICollection<SeguimientoActividad>? Seguimientos { get; set; }
+        [Required]
+        public int UsuarioId { get; set; }
     }
 }
-
