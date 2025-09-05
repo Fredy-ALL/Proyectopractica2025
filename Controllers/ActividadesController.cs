@@ -31,7 +31,7 @@ namespace ToDoApi.Controllers
             var actividad = await _context.Actividades.FindAsync(id);
 
             if (actividad == null)
-                return NotFound("Actividad no encontrada.");
+                return NotFound();
 
             return actividad;
         }
@@ -40,14 +40,12 @@ namespace ToDoApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Actividades>> PostActividad([FromBody] Actividades actividad)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             try
             {
-                _context.Actividades.Add(actividades);
+                _context.Actividades.Add(actividad);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
+
+                return CreatedAtAction(nameof(GetActividad), new { id = actividad.id }, actividad);
             }
             catch (Exception ex)
             {
@@ -59,8 +57,8 @@ namespace ToDoApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutActividad(int id, [FromBody] Actividades actividad)
         {
-            if (id != actividad.Id)
-                return BadRequest("El ID no coincide.");
+            if (id != actividad.id)
+                return BadRequest();
 
             _context.Entry(actividad).State = EntityState.Modified;
 
@@ -71,11 +69,13 @@ namespace ToDoApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ActividadExists(id))
-                    return NotFound("Actividad no encontrada.");
+                if (!_context.Actividades.Any(a => a.id == id))
+                    return NotFound();
                 else
                     throw;
             }
+
+            return NoContent();
         }
 
         // DELETE: api/Actividades/5
@@ -84,7 +84,7 @@ namespace ToDoApi.Controllers
         {
             var actividad = await _context.Actividades.FindAsync(id);
             if (actividad == null)
-                return NotFound("Actividad no encontrada.");
+                return NotFound();
 
             _context.Actividades.Remove(actividad);
             await _context.SaveChangesAsync();

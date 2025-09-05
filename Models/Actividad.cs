@@ -7,31 +7,25 @@ namespace ToDoApi.Models
     public class Actividades
     {
         [Key]
-        public int Id { get; set; }
+        public int id { get; set; }
 
-        [Required, MaxLength(255)]
-        public string Titulo { get; set; }
+        [Required, MaxLength(150)]
+        public string titulo { get; set; }
 
-        [Required]
-        public string Descripcion { get; set; }
+        [Required, MaxLength(500)]
+        public string descripcion { get; set; }
 
-        [Required]
-        [RegularExpression("alta|media|baja", ErrorMessage = "Prioridad inválida.")]
-        public string Prioridad { get; set; }
-
-        [Required]
-        public DateTime FechaInicio { get; set; }
+        [Required, MaxLength(50)]
+        public string Prioridad { get; set; } // 'alta', 'media', 'baja'
 
         [Required]
-        public DateTime FechaEstimadaFinalizacion { get; set; }
+        public DateTime fecha_inicio { get; set; }
 
         [Required]
-        [RegularExpression("pendiente|en progreso|completada|cancelada", ErrorMessage = "Estado inválido.")]
-        public string Estado { get; set; }
+        public DateTime fecha_estimada_finalizaciom { get; set; }
 
-        // Ya no hay UsuarioId ni relación directa
-        [JsonIgnore]
-        public virtual ICollection<SeguimientoActividad>? Seguimientos { get; set; }
+        [Required, MaxLength(50)]
+        public string estado { get; set; } // 'pendiente', 'en progreso', 'completada', 'cancelada'
     }
 }
 
