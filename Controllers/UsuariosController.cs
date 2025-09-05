@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoApi.Data;     // Aquí está tu AppDbContext
-using ToDoApi.Models;   // Aquí está tu modelo Usuario
+using ToDoApi.Data;     
+using ToDoApi.Models;   
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

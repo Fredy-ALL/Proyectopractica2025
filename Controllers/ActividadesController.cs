@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoApi.Data;     // Tu DbContext
-using ToDoApi.Models;   // Tus modelos Actividad y Usuario
+using ToDoApi.Data;     
+using ToDoApi.Models;   
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace ToDoApi.Controllers
             _context = context;
         }
 
-        // GET: api/actividades
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Actividad>>> GetActividades()
         {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoApi.Data;       // DbContext
-using ToDoApi.Models;     // Modelo SeguimientoActividad
+using ToDoApi.Data;       
+using ToDoApi.Models;     
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
