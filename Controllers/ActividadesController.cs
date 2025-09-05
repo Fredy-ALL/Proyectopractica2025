@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoApi.Data;     // Tu DbContext
-using ToDoApi.Models;   // Tu modelo Actividad
+using ToDoApi.Models;   // Tus modelos Actividad y Usuario
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace ToDoApi.Controllers
 {
@@ -22,14 +23,16 @@ namespace ToDoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Actividad>>> GetActividades()
         {
-            return await _context.Actividades.ToListAsync();
+            return await _context.Actividades.Include(a => a.Usuario).ToListAsync();
         }
 
         // GET: api/actividades/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Actividad>> GetActividad(int id)
         {
-            var actividad = await _context.Actividades.FindAsync(id);
+            var actividad = await _context.Actividades
+                .Include(a => a.Usuario)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (actividad == null)
             {
@@ -43,8 +46,25 @@ namespace ToDoApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Actividad>> PostActividad(Actividad actividad)
         {
+            // Verificar que el usuario exista
+            var usuarioExistente = await _context.Usuarios.FindAsync(actividad.UsuarioId);
+            if (usuarioExistente == null)
+            {
+                return BadRequest("El usuario no existe.");
+            }
+
+            // Attach del usuario existente para que EF Core no intente insertarlo
+            actividad.Usuario = usuarioExistente;
             _context.Actividades.Add(actividad);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest("Ocurrió un error al guardar la actividad.");
+            }
 
             return CreatedAtAction(nameof(GetActividad), new { id = actividad.Id }, actividad);
         }
@@ -58,6 +78,14 @@ namespace ToDoApi.Controllers
                 return BadRequest();
             }
 
+            // Verificar que el usuario exista
+            var usuarioExistente = await _context.Usuarios.FindAsync(actividad.UsuarioId);
+            if (usuarioExistente == null)
+            {
+                return BadRequest("El usuario no existe.");
+            }
+
+            actividad.Usuario = usuarioExistente;
             _context.Entry(actividad).State = EntityState.Modified;
 
             try
