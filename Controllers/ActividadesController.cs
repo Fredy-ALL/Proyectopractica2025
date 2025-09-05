@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoApi.Data;
 using ToDoApi.Models;
+using todoapi.Models;
 
 namespace ToDoApi.Controllers
 {
@@ -10,7 +10,7 @@ namespace ToDoApi.Controllers
     public class ActividadesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private Actividades actividades;
+        private Actividad actividades;
 
         public ActividadesController(AppDbContext context)
         {
@@ -19,14 +19,14 @@ namespace ToDoApi.Controllers
 
         // GET: api/Actividades
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Actividades>>> GetActividades()
+        public async Task<ActionResult<IEnumerable<Actividad>>> GetActividades()
         {
             return await _context.Actividades.ToListAsync();
         }
 
         // GET: api/Actividades/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Actividades>> GetActividad(int id)
+        public async Task<ActionResult<Actividad>> GetActividad(int id)
         {
             var actividad = await _context.Actividades.FindAsync(id);
 
@@ -38,11 +38,11 @@ namespace ToDoApi.Controllers
 
         // POST: api/Actividades
         [HttpPost]
-        public async Task<ActionResult<Actividades>> PostActividad([FromBody] Actividades actividad)
+        public async Task<ActionResult<Actividad>> PostActividad([FromBody] Actividad actividad)
         {
             try
             {
-                _context.Actividades.Add(actividad);
+                _context.Actividades.Add(Actividad);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(GetActividad), new { id = actividad.id }, actividad);
@@ -55,7 +55,7 @@ namespace ToDoApi.Controllers
 
         // PUT: api/Actividades/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutActividad(int id, [FromBody] Actividades actividad)
+        public async Task<IActionResult> PutActividad(int id, [FromBody] Actividad actividad)
         {
             if (id != actividad.id)
                 return BadRequest();
@@ -94,7 +94,7 @@ namespace ToDoApi.Controllers
 
         private bool ActividadExists(int id)
         {
-            return _context.Actividades.Any(a => a.Id == id);
+            return _context.Actividades.Any(a => a.id == id);
         }
     }
 }

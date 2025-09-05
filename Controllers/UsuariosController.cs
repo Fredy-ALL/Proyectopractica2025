@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ToDoApi.Data;     
-using ToDoApi.Models;   
+using todoapi.Models;  
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
