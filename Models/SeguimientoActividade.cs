@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using ToDoApi.Models;
+using todoapi.Models;
 
 namespace todoapi.Models;
 
@@ -17,7 +18,8 @@ public partial class SeguimientoActividade
 
     public DateTime FechaHora { get; set; }
 
-    public Actividad Actividades { get; set; } = null!;
+    public string Actividades { get; set; } = null!;
+
 
     public virtual Usuario Usuario { get; set; } = null!;
 }

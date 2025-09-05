@@ -17,7 +17,7 @@ public partial class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Actividad> Actividades { get; set; }
+    public virtual DbSet<Actividades> Actividades { get; set; }
 
     public virtual DbSet<SeguimientoActividade> SeguimientoActividades { get; set; }
 
@@ -29,9 +29,9 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Actividad>(entity =>
+        modelBuilder.Entity<Actividades>(entity =>
         {
-            entity.HasKey(e => e.id).HasName("PK__Activida__3213E83FFD257937");
+            entity.HasKey(e => e.id).HasName("PK_Activida_3213E83FFD257937");
 
             entity.Property(e => e.id).HasColumnName("id");
             entity.Property(e => e.descripcion)
@@ -59,7 +59,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<SeguimientoActividade>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Seguimie__3213E83F4E3E2F53");
+            entity.HasKey(e => e.ActividadId).HasName("PK_Seguimie_3213E83F4E3E2F53");
 
             entity.ToTable("Seguimiento_Actividades");
 
@@ -74,24 +74,24 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("fecha_hora");
             entity.Property(e => e.UsuarioId).HasColumnName("usuario_id");
 
-            entity.HasOne(d => d.Actividad).WithMany(p => p.SeguimientoActividades)
+            entity.HasOne(d => d.Usuario).WithMany(p => p.SeguimientoActividades)
                 .HasForeignKey(d => d.ActividadId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Seguimien__activ__44FF419A");
+                .HasConstraintName("FK_Seguimienactiv_44FF419A");
 
             entity.HasOne(d => d.Usuario).WithMany(p => p.SeguimientoActividades)
                 .HasForeignKey(d => d.UsuarioId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Seguimien__usuar__45F365D3");
+                .HasConstraintName("FK_Seguimienusuar_45F365D3");
         });
 
         modelBuilder.Entity<Usuario>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Usuarios__3213E83FC8A456DF");
+            entity.HasKey(e => e.Id).HasName("PK_Usuarios_3213E83FC8A456DF");
 
-            entity.HasIndex(e => e.Email, "UQ__Usuarios__AB6E6164E8F6A67E").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ_Usuarios_AB6E6164E8F6A67E").IsUnique();
 
-            entity.HasIndex(e => e.Username, "UQ__Usuarios__B15BE12EC6D481F8").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ_Usuarios_B15BE12EC6D481F8").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Apellido)
